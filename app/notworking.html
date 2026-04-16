@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IRS Tax Assistant — Gemma 4 WebGPU</title>
+  <style>
+    :root { --bg:#0c0f14; --surface:#151921; --surface2:#1c2230; --border:#262d3d; --text:#d4dae6; --muted:#6b7a94; --accent:#47d4a0; --accent-dim:#1a3d2f; --warn:#f5a623; --danger:#e85d5d; }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background:var(--bg); color:var(--text); font-family:system-ui,sans-serif; min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:2rem 1rem; }
+    h1 { font-size:1.6rem; font-weight:700; margin-bottom:.25rem; }
+    h1 span { color:var(--accent); }
+    .subtitle { font-size:.82rem; color:var(--muted); margin-bottom:2rem; font-family:monospace; }
+    #container { width:100%; max-width:800px; display:flex; flex-direction:column; gap:1rem; }
+    #status-panel { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:1rem 1.2rem; display:flex; flex-direction:column; gap:.5rem; font-family:monospace; font-size:.82rem; }
+    .srow { display:flex; justify-content:space-between; }
+    .slabel { color:var(--muted); }
+    .sval { font-weight:600; }
+    .sval.ready { color:var(--accent); }
+    .sval.loading { color:var(--warn); }
+    .sval.error { color:var(--danger); }
+    #progress-bar { height:4px; background:var(--surface2); border-radius:2px; overflow:hidden; display:none; margin-top:.5rem; }
+    #progress-fill { height:100%; background:var(--accent); width:0%; transition:width .3s; }
+    #load-btn { width:100%; padding:14px; background:var(--accent-dim); border:1px solid var(--accent); color:var(--accent); font-family:monospace; font-size:.88rem; font-weight:600; border-radius:8px; cursor:pointer; }
+    #load-btn:hover:not(:disabled) { background:#1f4f3a; }
+    #load-btn:disabled { opacity:.4; cursor:not-allowed; }
+    #chat-box { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:1rem; min-height:300px; max-height:480px; overflow-y:auto; display:flex; flex-direction:column; gap:.75rem; }
+    .msg { padding:.65rem .9rem; border-radius:10px; font-size:.9rem; line-height:1.6; max-width:88%; white-space:pre-wrap; }
+    .msg .label { font-family:monospace; font-size:.72rem; color:var(--muted); margin-bottom:.35rem; text-transform:uppercase; letter-spacing:.5px; }
+    .msg.user { background:var(--surface2); border:1px solid var(--border); align-self:flex-end; }
+    .msg.assistant { background:var(--surface); border:1px solid var(--border); border-left:3px solid var(--accent); }
+    .msg.assistant .label { color:var(--accent); }
+    .msg.system { background:transparent; color:var(--muted); font-size:.78rem; align-self:center; text-align:center; border:none; }
+    #input-row { display:flex; gap:.6rem; }
+    #user-input { flex:1; background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:12px 14px; color:var(--text); font-size:.9rem; outline:none; }
+    #user-input:focus { border-color:var(--accent); }
+    #user-input::placeholder { color:var(--muted); }
+    #send-btn { padding:12px 20px; background:var(--accent); border:none; border-radius:8px; color:#0c0f14; font-family:monospace; font-size:.88rem; font-weight:700; cursor:pointer; }
+    #send-btn:hover:not(:disabled) { filter:brightness(1.1); }
+    #send-btn:disabled { opacity:.3; cursor:not-allowed; }
+    .info { font-size:.75rem; color:var(--muted); text-align:center; }
+  </style>
+</head>
+<body>
+
+<h1>IRS Tax Assistant · <span>Gemma 4 WebGPU</span></h1>
+<p class="subtitle">@huggingface/transformers v4.0.1 · madhured/irs-gemma4-e2b-onnx · 100% in-browser</p>
+
+<div id="container">
+
+  <div id="status-panel">
+    <div class="srow"><span class="slabel">WebGPU</span><span class="sval" id="webgpu-status">checking…</span></div>
+    <div class="srow"><span class="slabel">Library</span><span class="sval ready">@huggingface/transformers v4.0.1</span></div>
+    <div class="srow"><span class="slabel">Model</span><span class="sval" id="model-status">not loaded</span></div>
+    <div class="srow"><span class="slabel">Size</span><span class="sval">~9.25 GB (fp16, cached after first load)</span></div>
+    <div id="progress-bar"><div id="progress-fill"></div></div>
+  </div>
+
+  <button id="load-btn" onclick="loadModel()">Load IRS Gemma 4 E2B (~9.25 GB, cached after first load)</button>
+
+  <div id="chat-box">
+    <div class="msg system">Load the model above, then ask anything about IRS forms, deductions, or filing</div>
+  </div>
+
+  <div id="input-row">
+    <input type="text" id="user-input" placeholder="e.g. What documents do I need to file my taxes?" disabled
+      onkeydown="if(event.key==='Enter') sendMessage()" />
+    <button id="send-btn" onclick="sendMessage()" disabled>Send</button>
+  </div>
+
+  <p class="info">Chrome 113+ or Edge 113+ required. No data leaves your device.</p>
+</div>
+
+<script type="module">
+  const webgpuEl = document.getElementById('webgpu-status');
+  const modelEl  = document.getElementById('model-status');
+
+  if (!navigator.gpu) {
+    webgpuEl.textContent = 'NOT SUPPORTED'; webgpuEl.className = 'sval error';
+    document.getElementById('load-btn').disabled = true;
+    document.getElementById('load-btn').textContent = 'WebGPU not available — use Chrome or Edge';
+  } else {
+    try {
+      const adapter = await navigator.gpu.requestAdapter();
+      if (adapter) {
+        webgpuEl.textContent = 'available'; webgpuEl.className = 'sval ready';
+        try { const i = await adapter.requestAdapterInfo(); if (i?.description) webgpuEl.textContent = i.description; } catch(_) {}
+      }
+    } catch(e) { webgpuEl.textContent = 'error'; webgpuEl.className = 'sval error'; }
+  }
+
+  let model = null, processor = null, TextStreamerClass = null;
+  const history = [{
+    role: 'system',
+    content: 'You are an IRS tax expert. Help users understand IRS forms, filing requirements, deductions, deadlines, and tax procedures. Be accurate, cite form numbers where relevant, and keep answers concise.',
+  }];
+
+  window.loadModel = async function () {
+    const btn = document.getElementById('load-btn');
+    const bar = document.getElementById('progress-bar');
+    const fill = document.getElementById('progress-fill');
+    btn.disabled = true; btn.textContent = 'Importing Transformers.js v4…';
+    modelEl.textContent = 'importing…'; modelEl.className = 'sval loading';
+
+    try {
+      const { AutoProcessor, Gemma4ForConditionalGeneration, TextStreamer } =
+        await import('https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.0.1');
+      TextStreamerClass = TextStreamer;
+
+      const MODEL_ID = 'madhured/irs-gemma4-e2b-onnx';
+      btn.textContent = 'Loading processor…';
+      processor = await AutoProcessor.from_pretrained(MODEL_ID);
+
+      btn.textContent = 'Downloading model (~9.25 GB)…';
+      bar.style.display = 'block';
+      let last = 0;
+
+      model = await Gemma4ForConditionalGeneration.from_pretrained(MODEL_ID, {
+        dtype: 'fp16', device: 'webgpu',
+        progress_callback: (info) => {
+          if (info.status === 'progress' && info.progress) {
+            const p = Math.round(info.progress);
+            if (p > last) { last = p; fill.style.width = p + '%'; btn.textContent = `Downloading… ${p}%`; }
+          }
+        },
+      });
+
+      bar.style.display = 'none';
+      modelEl.textContent = 'irs-gemma4-e2b ready ✓'; modelEl.className = 'sval ready';
+      btn.textContent = 'Model loaded ✓';
+      document.getElementById('user-input').disabled = false;
+      document.getElementById('send-btn').disabled = false;
+      document.getElementById('user-input').focus();
+      addMsg('system', 'Model ready — ask your IRS question below.');
+    } catch(err) {
+      console.error(err);
+      modelEl.textContent = 'failed'; modelEl.className = 'sval error';
+      btn.textContent = 'Retry'; btn.disabled = false; bar.style.display = 'none';
+    }
+  };
+
+  function addMsg(role, text) {
+    const box = document.getElementById('chat-box');
+    const wrap = document.createElement('div'); wrap.className = `msg ${role}`;
+    if (role !== 'system') {
+      const lbl = document.createElement('div'); lbl.className = 'label';
+      lbl.textContent = role === 'user' ? 'You' : 'Gemma 4 IRS'; wrap.appendChild(lbl);
+    }
+    const body = document.createElement('div'); body.textContent = text;
+    wrap.appendChild(body); box.appendChild(wrap); box.scrollTop = box.scrollHeight;
+    return body;
+  }
+
+  window.sendMessage = async function () {
+    if (!model || !processor) return;
+    const inp = document.getElementById('user-input');
+    const btn = document.getElementById('send-btn');
+    const text = inp.value.trim(); if (!text) return;
+    addMsg('user', text); history.push({ role:'user', content:text });
+    inp.value = ''; inp.disabled = true; btn.disabled = true;
+    const out = addMsg('assistant', '');
+
+    try {
+      const inputs = processor.apply_chat_template(history, { tokenize:true, add_generation_prompt:true, return_dict:true });
+      const streamer = new TextStreamerClass(processor.tokenizer, {
+        skip_prompt:true, skip_special_tokens:true,
+        callback_function: (chunk) => { out.textContent += chunk; document.getElementById('chat-box').scrollTop = 9999; },
+      });
+      const generated = await model.generate({ ...inputs, max_new_tokens:512, do_sample:true, temperature:0.7, streamer });
+      const pLen = inputs.input_ids.dims[1];
+      const decoded = processor.tokenizer.batch_decode(generated.slice(null,[pLen,null]), { skip_special_tokens:true });
+      history.push({ role:'assistant', content: decoded[0] || out.textContent });
+    } catch(err) { console.error(err); out.textContent = '⚠️ ' + err.message; }
+
+    inp.disabled = false; btn.disabled = false; inp.focus();
+  };
+</script>
+</body>
+</html>

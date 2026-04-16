@@ -1,0 +1,375 @@
+{
+  "model": "onnx-community/gemma-4-E2B-it-ONNX",
+  "seed": 42,
+  "n_per_form": 5,
+  "forms_evaluated": [
+    "1040",
+    "W-2",
+    "1099-MISC",
+    "1099-NEC",
+    "1099-INT",
+    "1099-DIV",
+    "Schedule-A",
+    "Schedule-B"
+  ],
+  "per_form": [
+    {
+      "form": "1040",
+      "mode": "grounded",
+      "n": 5,
+      "rouge_l": 0.2219,
+      "faithfulness": 1,
+      "source_acc": 1,
+      "tag_qa": 2,
+      "tag_model": 0,
+      "tag_none": 3,
+      "refusal_rate": 0.6
+    },
+    {
+      "form": "W-2",
+      "mode": "grounded",
+      "n": 5,
+      "rouge_l": 0.1145,
+      "faithfulness": 0.6,
+      "source_acc": 1,
+      "tag_qa": 1,
+      "tag_model": 0,
+      "tag_none": 4,
+      "refusal_rate": 0.8
+    },
+    {
+      "form": "1099-MISC",
+      "mode": "grounded",
+      "n": 5,
+      "rouge_l": 0.0949,
+      "faithfulness": 1,
+      "source_acc": 1,
+      "tag_qa": 0,
+      "tag_model": 0,
+      "tag_none": 5,
+      "refusal_rate": 1
+    },
+    {
+      "form": "1099-NEC",
+      "mode": "grounded",
+      "n": 5,
+      "rouge_l": 0.2269,
+      "faithfulness": 0.9,
+      "source_acc": 1,
+      "tag_qa": 3,
+      "tag_model": 0,
+      "tag_none": 2,
+      "refusal_rate": 0.4
+    },
+    {
+      "form": "1099-INT",
+      "mode": "grounded",
+      "n": 5,
+      "rouge_l": 0.1711,
+      "faithfulness": 0.8,
+      "source_acc": 1,
+      "tag_qa": 1,
+      "tag_model": 0,
+      "tag_none": 4,
+      "refusal_rate": 0.8
+    },
+    {
+      "form": "1099-DIV",
+      "mode": "grounded",
+      "n": 5,
+      "rouge_l": 0.1974,
+      "faithfulness": 1,
+      "source_acc": 1,
+      "tag_qa": 2,
+      "tag_model": 0,
+      "tag_none": 3,
+      "refusal_rate": 0.6
+    },
+    {
+      "form": "Schedule-A",
+      "mode": "grounded",
+      "n": 5,
+      "rouge_l": 0.2429,
+      "faithfulness": 1,
+      "source_acc": 1,
+      "tag_qa": 1,
+      "tag_model": 0,
+      "tag_none": 4,
+      "refusal_rate": 0.8
+    },
+    {
+      "form": "Schedule-B",
+      "mode": "grounded",
+      "n": 5,
+      "rouge_l": 0.2939,
+      "faithfulness": 1,
+      "source_acc": 1,
+      "tag_qa": 3,
+      "tag_model": 0,
+      "tag_none": 2,
+      "refusal_rate": 0.4
+    },
+    {
+      "form": "1040",
+      "mode": "mixed",
+      "n": 5,
+      "rouge_l": 0.2186,
+      "faithfulness": 0.8822,
+      "source_acc": 0.8,
+      "tag_qa": 1,
+      "tag_model": 3,
+      "tag_none": 1,
+      "refusal_rate": 0.2
+    },
+    {
+      "form": "W-2",
+      "mode": "mixed",
+      "n": 5,
+      "rouge_l": 0.2122,
+      "faithfulness": 0.8508,
+      "source_acc": 1,
+      "tag_qa": 1,
+      "tag_model": 4,
+      "tag_none": 0,
+      "refusal_rate": 0
+    },
+    {
+      "form": "1099-MISC",
+      "mode": "mixed",
+      "n": 5,
+      "rouge_l": 0.2251,
+      "faithfulness": 0.86,
+      "source_acc": 0.8,
+      "tag_qa": 0,
+      "tag_model": 4,
+      "tag_none": 1,
+      "refusal_rate": 0
+    },
+    {
+      "form": "1099-NEC",
+      "mode": "mixed",
+      "n": 5,
+      "rouge_l": 0.214,
+      "faithfulness": 0.7339,
+      "source_acc": 0.8,
+      "tag_qa": 2,
+      "tag_model": 2,
+      "tag_none": 1,
+      "refusal_rate": 0.2
+    },
+    {
+      "form": "1099-INT",
+      "mode": "mixed",
+      "n": 5,
+      "rouge_l": 0.1832,
+      "faithfulness": 0.9264,
+      "source_acc": 1,
+      "tag_qa": 1,
+      "tag_model": 4,
+      "tag_none": 0,
+      "refusal_rate": 0
+    },
+    {
+      "form": "1099-DIV",
+      "mode": "mixed",
+      "n": 5,
+      "rouge_l": 0.2234,
+      "faithfulness": 0.9169,
+      "source_acc": 0.8,
+      "tag_qa": 2,
+      "tag_model": 2,
+      "tag_none": 1,
+      "refusal_rate": 0.2
+    },
+    {
+      "form": "Schedule-A",
+      "mode": "mixed",
+      "n": 5,
+      "rouge_l": 0.2956,
+      "faithfulness": 0.9504,
+      "source_acc": 0.8,
+      "tag_qa": 2,
+      "tag_model": 2,
+      "tag_none": 1,
+      "refusal_rate": 0.2
+    },
+    {
+      "form": "Schedule-B",
+      "mode": "mixed",
+      "n": 5,
+      "rouge_l": 0.3962,
+      "faithfulness": 0.8533,
+      "source_acc": 1,
+      "tag_qa": 2,
+      "tag_model": 3,
+      "tag_none": 0,
+      "refusal_rate": 0
+    },
+    {
+      "form": "1040",
+      "mode": "model",
+      "n": 5,
+      "rouge_l": 0.1617,
+      "faithfulness": 0.7568,
+      "source_acc": 1,
+      "tag_qa": 0,
+      "tag_model": 0,
+      "tag_none": 5,
+      "refusal_rate": 0
+    },
+    {
+      "form": "W-2",
+      "mode": "model",
+      "n": 5,
+      "rouge_l": 0.2275,
+      "faithfulness": 0.8127,
+      "source_acc": 1,
+      "tag_qa": 0,
+      "tag_model": 0,
+      "tag_none": 5,
+      "refusal_rate": 0
+    },
+    {
+      "form": "1099-MISC",
+      "mode": "model",
+      "n": 5,
+      "rouge_l": 0.1802,
+      "faithfulness": 0.7757,
+      "source_acc": 1,
+      "tag_qa": 0,
+      "tag_model": 0,
+      "tag_none": 5,
+      "refusal_rate": 0
+    },
+    {
+      "form": "1099-NEC",
+      "mode": "model",
+      "n": 5,
+      "rouge_l": 0.1546,
+      "faithfulness": 0.7759,
+      "source_acc": 1,
+      "tag_qa": 0,
+      "tag_model": 0,
+      "tag_none": 5,
+      "refusal_rate": 0
+    },
+    {
+      "form": "1099-INT",
+      "mode": "model",
+      "n": 5,
+      "rouge_l": 0.1439,
+      "faithfulness": 0.799,
+      "source_acc": 1,
+      "tag_qa": 0,
+      "tag_model": 0,
+      "tag_none": 5,
+      "refusal_rate": 0
+    },
+    {
+      "form": "1099-DIV",
+      "mode": "model",
+      "n": 5,
+      "rouge_l": 0.2548,
+      "faithfulness": 0.8768,
+      "source_acc": 1,
+      "tag_qa": 0,
+      "tag_model": 0,
+      "tag_none": 5,
+      "refusal_rate": 0
+    },
+    {
+      "form": "Schedule-A",
+      "mode": "model",
+      "n": 5,
+      "rouge_l": 0.1662,
+      "faithfulness": 0.8176,
+      "source_acc": 1,
+      "tag_qa": 0,
+      "tag_model": 0,
+      "tag_none": 5,
+      "refusal_rate": 0
+    },
+    {
+      "form": "Schedule-B",
+      "mode": "model",
+      "n": 5,
+      "rouge_l": 0.2071,
+      "faithfulness": 0.7631,
+      "source_acc": 1,
+      "tag_qa": 0,
+      "tag_model": 0,
+      "tag_none": 5,
+      "refusal_rate": 0
+    }
+  ],
+  "aggregate_by_mode": {
+    "grounded": {
+      "rouge_l": 0.1954,
+      "faithfulness": 0.9125,
+      "source_acc": 1,
+      "refusal_rate": 0.675
+    },
+    "mixed": {
+      "rouge_l": 0.246,
+      "faithfulness": 0.8717,
+      "source_acc": 0.875,
+      "refusal_rate": 0.1
+    },
+    "model": {
+      "rouge_l": 0.187,
+      "faithfulness": 0.7972,
+      "source_acc": 1,
+      "refusal_rate": 0
+    }
+  },
+  "oos_refusal": [
+    {
+      "form": "1040",
+      "oos_questions": 5,
+      "correctly_refused": 5,
+      "refusal_rate": 1
+    },
+    {
+      "form": "W-2",
+      "oos_questions": 5,
+      "correctly_refused": 5,
+      "refusal_rate": 1
+    },
+    {
+      "form": "1099-MISC",
+      "oos_questions": 5,
+      "correctly_refused": 5,
+      "refusal_rate": 1
+    },
+    {
+      "form": "1099-NEC",
+      "oos_questions": 5,
+      "correctly_refused": 5,
+      "refusal_rate": 1
+    },
+    {
+      "form": "1099-INT",
+      "oos_questions": 5,
+      "correctly_refused": 5,
+      "refusal_rate": 1
+    },
+    {
+      "form": "1099-DIV",
+      "oos_questions": 5,
+      "correctly_refused": 5,
+      "refusal_rate": 1
+    },
+    {
+      "form": "Schedule-A",
+      "oos_questions": 5,
+      "correctly_refused": 5,
+      "refusal_rate": 1
+    },
+    {
+      "form": "Schedule-B",
+      "oos_questions": 5,
+      "correctly_refused": 5,
+      "refusal_rate": 1
+    }
+  ]
+}

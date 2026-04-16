@@ -1,0 +1,23 @@
+{
+  "W-2": {
+    "Pass 1 \u2014 Fields": "__load_from_data_jsonl__",
+    "Pass 2 \u2014 Procedural": "__load_from_data_jsonl__"
+  },
+  "1099-MISC": {
+    "Pass 1 \u2014 Fields": "__load_from_data_jsonl__"
+  },
+  "1099-NEC": {
+    "Pass 1 \u2014 Fields": "__load_from_data_jsonl__",
+    "Pass 2 \u2014 Procedural": "__load_from_data_jsonl__"
+  },
+  "1099-INT": {
+    "Pass 1 \u2014 Fields": "__load_from_data_jsonl__",
+    "Pass 2 \u2014 Procedural": "__load_from_data_jsonl__"
+  },
+  "1099-DIV": {
+    "Pass 1 \u2014 Fields": "__load_from_data_jsonl__"
+  },
+  "1040": {
+    "Pass 1 \u2014 Fields": "__load_from_data_jsonl__"
+  }
+}

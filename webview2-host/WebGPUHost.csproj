@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>WebGPUHost</AssemblyName>
+    <RootNamespace>WebGPUHost</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- WebView2 — brings in the Chromium-based runtime with WebGPU support -->
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.*" />
+  </ItemGroup>
+
+</Project>

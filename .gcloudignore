@@ -1,0 +1,10 @@
+.git
+.gitignore
+*.ipynb
+*.sln
+*.md
+webview2-host/
+deploy.bash
+install-compat.py
+notworking.html
+measure

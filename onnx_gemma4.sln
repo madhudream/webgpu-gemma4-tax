@@ -1,0 +1,29 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "webview2-host", "webview2-host", "{71A2962F-18B4-43C0-12FF-D6C2D102D33A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebGPUHost", "webview2-host\WebGPUHost.csproj", "{5ED8F81B-7611-84C7-32FB-9CCF9BA98A7D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5ED8F81B-7611-84C7-32FB-9CCF9BA98A7D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5ED8F81B-7611-84C7-32FB-9CCF9BA98A7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5ED8F81B-7611-84C7-32FB-9CCF9BA98A7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5ED8F81B-7611-84C7-32FB-9CCF9BA98A7D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5ED8F81B-7611-84C7-32FB-9CCF9BA98A7D} = {71A2962F-18B4-43C0-12FF-D6C2D102D33A}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B4372B8E-8E3C-41CF-BD79-9A44C328859C}
+	EndGlobalSection
+EndGlobal

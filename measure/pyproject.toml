@@ -1,0 +1,25 @@
+[project]
+name = "irs-qa-eval"
+version = "0.1.0"
+description = "Evaluation script for IRS Q&A grounded chatbot (Gemma 4 ONNX)"
+requires-python = ">=3.11,<3.14"
+dependencies = [
+    # transformers latest dev from GitHub main (Gemma 4 support)
+    "transformers @ git+https://github.com/huggingface/transformers.git",
+    # ONNX runtime (direct — optimum[onnxruntime] caps transformers<4.58 and conflicts with git transformers)
+    "onnxruntime>=1.18",
+    # Metrics
+    "evaluate>=0.4",
+    "rouge-score>=0.1.2",
+    "bert-score>=0.3.13",
+    # Utilities
+    "torch>=2.2",
+    "huggingface-hub>=0.24",
+    "rich>=13",
+    "pandas>=2",
+    "accelerate>=1.13.0",
+]
+
+[tool.uv]
+environments = ["sys_platform == 'darwin' or sys_platform == 'linux'"]
+# Run with: uv run evaluate_qa.py [options]

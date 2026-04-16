@@ -1,0 +1,11 @@
+{
+  "name": "irs-qa-eval",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "eval": "node evaluate_qa.mjs"
+  },
+  "dependencies": {
+    "@huggingface/transformers": "^4.0.1"
+  }
+}

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IRS Tax Forms — AI Analysis POC</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/poc.css" />
+</head>
+<body>
+
+  <!-- ── Page-load AI progress bar (top of screen) ────────────────────────── -->
+  <div id="page-progress" class="hidden">
+    <span id="page-progress-label">Loading AI model…</span>
+    <div id="page-progress-track">
+      <div id="page-progress-fill"></div>
+    </div>
+  </div>
+
+  <div class="layout">
+
+    <!-- ── Sidebar ────────────────────────────────────────────────────────── -->
+    <aside class="sidebar">
+
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-eyebrow">IRS Forms POC</div>
+        <div class="sidebar-logo-title">WebGPU AI Analysis</div>
+      </div>
+
+      <nav id="sidebar-nav">
+        <!-- Built dynamically by nav.js from FORMS data -->
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-footer-label">AI Engine — Gemma 4</div>
+        <div class="ai-status-row">
+          <span id="ai-dot"></span>
+          <span id="ai-status-text">initialising…</span>
+        </div>
+        <div id="ai-load-bar" class="hidden">
+          <div id="ai-load-fill"></div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ── Main content ───────────────────────────────────────────────────── -->
+    <div class="main-content">
+
+      <!-- Top bar -->
+      <header class="topbar">
+        <h1 id="form-title">Select a form</h1>
+        <button id="ki-detail-btn" onclick="openModal()">Known Issues</button>
+      </header>
+
+      <!-- Content area: form (left) + chat (right) -->
+      <div class="content-area">
+
+        <div class="content-scroll">
+
+          <!-- AI analysis banner (shown when form is loaded) -->
+          <div id="ai-banner" class="hidden">
+            <div class="ai-banner-header">
+              <div class="ai-banner-label">
+                <span id="ai-banner-dot"></span>
+                Gemma 4 WebGPU — AI Issue Analysis
+              </div>
+              <button id="rerun-btn" class="hidden">↻ Rerun</button>
+            </div>
+            <div id="ai-output"></div>
+          </div>
+
+          <!-- Known-issues top strip (shown below AI banner when a form is loaded) -->
+          <div id="ki-top-strip" style="display:none"></div>
+
+          <!-- Form body -->
+          <div class="form-scroll-inner">
+
+            <!-- Placeholder shown before any form is selected -->
+            <div id="form-placeholder">
+              <div class="placeholder-icon">📄</div>
+              <div class="placeholder-text">Select a tax form from the sidebar</div>
+              <div class="placeholder-sub">AI-powered known-issue detection runs entirely in your browser via WebGPU</div>
+            </div>
+
+            <!-- Rendered form fields -->
+            <div id="form-body" class="hidden"></div>
+
+          </div>
+        </div>
+
+        <!-- Chat panel — shown once a form is selected -->
+        <div id="chat-panel" class="chat-panel hidden">
+          <div class="chat-header">
+            <span class="chat-header-icon">💬</span>
+            <span id="chat-header-title">Ask about this form</span>
+          </div>
+          <div class="chat-mode-bar">
+            <button class="chat-mode-btn" data-mode="grounded" title="Only use loaded Q&A data">Grounded</button>
+            <button class="chat-mode-btn chat-mode-btn--active" data-mode="mixed" title="Q&A data + model knowledge (default)">Mixed</button>
+            <button class="chat-mode-btn" data-mode="model" title="Model's own knowledge only">Model only</button>
+          </div>
+          <div id="chat-messages" class="chat-messages"></div>
+          <div class="chat-input-row">
+            <textarea id="chat-input" class="chat-input" rows="2"
+              placeholder="Ask a question about this form…"></textarea>
+            <button id="chat-send-btn" class="chat-send-btn" title="Send">↑</button>
+          </div>
+        </div>
+
+      </div><!-- /.content-area -->
+    </div>
+  </div>
+
+  <!-- ── Known issues detail modal ──────────────────────────────────────── -->
+  <div id="modal-overlay" class="hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 id="modal-title"></h2>
+        <button class="modal-close-btn" onclick="closeModal()">×</button>
+      </div>
+      <div id="modal-list"></div>
+      <div class="modal-footer">
+        <span class="modal-footer-note">Source: IRS publications &amp; field experience</span>
+        <div class="modal-footer-actions">
+          <button id="modal-save-btn" class="modal-save-btn hidden" onclick="saveModal()">Save Changes</button>
+          <button class="modal-footer-close" onclick="closeModal()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Module entry point ─────────────────────────────────────────────── -->
+  <script type="module">
+    import { init, selectForm } from './js/nav.js';
+    window.selectForm = selectForm;
+    init();
+  </script>
+
+</body>
+</html>
