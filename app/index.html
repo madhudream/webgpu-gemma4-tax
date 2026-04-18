@@ -23,8 +23,11 @@
     <aside class="sidebar">
 
       <div class="sidebar-logo">
-        <div class="sidebar-logo-eyebrow">IRS Forms POC</div>
-        <div class="sidebar-logo-title">WebGPU AI Analysis</div>
+        <div>
+          <div class="sidebar-logo-eyebrow">IRS Forms POC</div>
+          <div class="sidebar-logo-title">WebGPU AI Analysis</div>
+        </div>
+        <button id="sidebar-close-btn" class="sidebar-close-btn" aria-label="Close menu">&times;</button>
       </div>
 
       <nav id="sidebar-nav">
@@ -48,8 +51,10 @@
 
       <!-- Top bar -->
       <header class="topbar">
+        <button id="sidebar-toggle-btn" class="topbar-mobile-btn" aria-label="Open menu">&#9776;</button>
         <h1 id="form-title">Select a form</h1>
         <button id="ki-detail-btn" onclick="openModal()">Known Issues</button>
+        <button id="chat-open-btn" class="topbar-mobile-btn" aria-label="Open chat" title="Open chat">&#x1F4AC;</button>
       </header>
 
       <!-- Content area: form (left) + chat (right) -->
@@ -91,8 +96,9 @@
         <!-- Chat panel — shown once a form is selected -->
         <div id="chat-panel" class="chat-panel hidden">
           <div class="chat-header">
-            <span class="chat-header-icon">💬</span>
+            <span class="chat-header-icon">&#x1F4AC;</span>
             <span id="chat-header-title">Ask about this form</span>
+            <button id="chat-close-btn" class="chat-close-btn" aria-label="Close chat">&times;</button>
           </div>
           <div class="chat-mode-bar">
             <button class="chat-mode-btn" data-mode="grounded" title="Only use loaded Q&A data">Grounded</button>
@@ -134,6 +140,69 @@
     import { init, selectForm } from './js/nav.js';
     window.selectForm = selectForm;
     init();
+  </script>
+
+  <!-- ── Overlay backdrops (mobile only) ─────────────────────────────────── -->
+  <div id="sidebar-backdrop"></div>
+  <div id="chat-backdrop"></div>
+
+  <!-- ── Mobile drawer + chat modal interactions ──────────────────────────── -->
+  <script>
+  (function () {
+    var MOBILE_BP = 860;
+    var isMobile  = function () { return window.innerWidth <= MOBILE_BP; };
+
+    var sidebar         = document.querySelector('.sidebar');
+    var sidebarBackdrop = document.getElementById('sidebar-backdrop');
+    var sidebarToggle   = document.getElementById('sidebar-toggle-btn');
+    var sidebarClose    = document.getElementById('sidebar-close-btn');
+    var chatPanel       = document.getElementById('chat-panel');
+    var chatBackdrop    = document.getElementById('chat-backdrop');
+    var chatOpenBtn     = document.getElementById('chat-open-btn');
+    var chatCloseBtn    = document.getElementById('chat-close-btn');
+
+    function openSidebar() {
+      sidebar.classList.add('sidebar--open');
+      sidebarBackdrop.classList.add('visible');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeSidebar() {
+      sidebar.classList.remove('sidebar--open');
+      sidebarBackdrop.classList.remove('visible');
+      document.body.style.overflow = '';
+    }
+    function openChatModal() {
+      if (chatPanel.classList.contains('hidden')) return; // no form loaded yet
+      chatPanel.classList.add('chat--mobile-open');
+      chatBackdrop.classList.add('visible');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeChatModal() {
+      chatPanel.classList.remove('chat--mobile-open');
+      chatBackdrop.classList.remove('visible');
+      document.body.style.overflow = '';
+    }
+
+    sidebarToggle  && sidebarToggle.addEventListener('click',   function () { if (isMobile()) openSidebar(); });
+    sidebarClose   && sidebarClose.addEventListener('click',    closeSidebar);
+    sidebarBackdrop && sidebarBackdrop.addEventListener('click', closeSidebar);
+
+    chatOpenBtn  && chatOpenBtn.addEventListener('click',  function () { if (isMobile()) openChatModal(); });
+    chatCloseBtn && chatCloseBtn.addEventListener('click', closeChatModal);
+    chatBackdrop && chatBackdrop.addEventListener('click', closeChatModal);
+
+    // Close sidebar after form selection on mobile
+    var sidebarNav = document.getElementById('sidebar-nav');
+    sidebarNav && sidebarNav.addEventListener('click', function (e) {
+      if (isMobile() && e.target.closest('.nav-btn')) closeSidebar();
+    });
+
+    // Open chat modal when a field AI button fires on mobile
+    // (nav.js removes .hidden before dispatching: wait one tick)
+    document.addEventListener('field-ai-ask', function () {
+      if (isMobile()) setTimeout(openChatModal, 50);
+    });
+  }());
   </script>
 
 </body>
