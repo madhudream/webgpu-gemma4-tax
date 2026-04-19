@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gemma 4 — Ask Anything</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #0f0f0f;
+      color: #e8e8e8;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid #222;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    header h1 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    #status-badge {
+      margin-left: auto;
+      font-size: 0.75rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      background: #2a2a2a;
+      color: #aaa;
+      white-space: nowrap;
+    }
+    #status-badge.ready  { background: #0d3b1e; color: #4ade80; }
+    #status-badge.error  { background: #3b0d0d; color: #f87171; }
+
+    #progress-bar-wrap {
+      height: 3px;
+      background: #1a1a1a;
+    }
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #6366f1, #a855f7);
+      transition: width 0.3s ease;
+    }
+
+    #chat {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .msg {
+      max-width: 720px;
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+    .msg.user {
+      align-self: flex-end;
+      background: #1e1e2e;
+      border: 1px solid #2e2e4e;
+      border-radius: 1rem 1rem 0.2rem 1rem;
+      padding: 0.65rem 1rem;
+      color: #c7c7f5;
+    }
+    .msg.assistant {
+      align-self: flex-start;
+      color: #e8e8e8;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .msg.assistant .label {
+      font-size: 0.7rem;
+      color: #666;
+      margin-bottom: 0.3rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    #empty-hint {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      color: #444;
+      pointer-events: none;
+    }
+    #empty-hint svg { opacity: 0.3; }
+    #empty-hint p { font-size: 0.9rem; }
+
+    #input-area {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid #222;
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    #user-input {
+      flex: 1;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 0.6rem;
+      padding: 0.65rem 1rem;
+      color: #e8e8e8;
+      font-size: 0.95rem;
+      resize: none;
+      height: 48px;
+      max-height: 160px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    #user-input:focus { border-color: #6366f1; }
+    #user-input::placeholder { color: #555; }
+
+    #send-btn {
+      background: #6366f1;
+      border: none;
+      border-radius: 0.6rem;
+      width: 48px;
+      height: 48px;
+      color: #fff;
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.2s, opacity 0.2s;
+    }
+    #send-btn:hover:not(:disabled) { background: #4f51d8; }
+    #send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .thinking-dot {
+      display: inline-block;
+      animation: blink 1s infinite;
+      color: #666;
+    }
+    @keyframes blink { 0%,100%{opacity:0} 50%{opacity:1} }
+  </style>
+</head>
+<body>
+
+<header>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/><circle cx="19" cy="5" r="3" fill="#a855f7" stroke="none"/>
+  </svg>
+  <h1>Gemma 4 · Ask Anything</h1>
+  <span id="status-badge">Loading model…</span>
+</header>
+
+<div id="progress-bar-wrap"><div id="progress-bar"></div></div>
+
+<div id="chat">
+  <div id="empty-hint">
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+    </svg>
+    <p>Ask me anything — running locally in your browser</p>
+  </div>
+</div>
+
+<div id="input-area">
+  <textarea id="user-input" placeholder="Ask anything…" rows="1"></textarea>
+  <button id="send-btn" disabled aria-label="Send">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+    </svg>
+  </button>
+</div>
+
+<script type="module">
+  const MODEL_ID = 'onnx-community/gemma-4-E2B-it-ONNX';
+  const CDN      = 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.0.1';
+
+  const chatEl    = document.getElementById('chat');
+  const inputEl   = document.getElementById('user-input');
+  const sendBtn   = document.getElementById('send-btn');
+  const statusEl  = document.getElementById('status-badge');
+  const progressEl= document.getElementById('progress-bar');
+  const hintEl    = document.getElementById('empty-hint');
+
+  let model     = null;
+  let processor = null;
+  let Streamer  = null;
+  let busy      = false;
+
+  // ── Auto-resize textarea ──────────────────────────────────────────────────
+  inputEl.addEventListener('input', () => {
+    inputEl.style.height = '48px';
+    inputEl.style.height = Math.min(inputEl.scrollHeight, 160) + 'px';
+  });
+
+  inputEl.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      if (!sendBtn.disabled) sendBtn.click();
+    }
+  });
+
+  // ── Load model ────────────────────────────────────────────────────────────
+  async function loadModel() {
+    setStatus('loading', 'Importing library…');
+    try {
+      const lib = await import(CDN);
+      Streamer = lib.TextStreamer;
+
+      setStatus('loading', 'Loading processor…');
+      processor = await lib.AutoProcessor.from_pretrained(MODEL_ID);
+
+      setStatus('loading', 'Downloading weights…');
+      model = await lib.Gemma4ForConditionalGeneration.from_pretrained(MODEL_ID, {
+        dtype: 'q4f16',
+        device: 'webgpu',
+        progress_callback: (info) => {
+          if (info.status === 'progress' && info.progress != null) {
+            const pct = Math.round(info.progress);
+            progressEl.style.width = pct + '%';
+            setStatus('loading', `Downloading… ${pct}%`);
+          }
+        },
+      });
+
+      progressEl.style.width = '100%';
+      setTimeout(() => { progressEl.style.width = '0%'; }, 600);
+      setStatus('ready', '● Ready');
+      sendBtn.disabled = false;
+      inputEl.focus();
+    } catch (err) {
+      console.error('[simple.html] load failed:', err);
+      setStatus('error', 'Load failed');
+    }
+  }
+
+  function setStatus(state, text) {
+    statusEl.textContent = text;
+    statusEl.className = state;
+  }
+
+  // ── Chat ──────────────────────────────────────────────────────────────────
+  sendBtn.addEventListener('click', async () => {
+    const text = inputEl.value.trim();
+    if (!text || busy) return;
+
+    hintEl.remove();
+
+    appendMsg('user', text);
+    inputEl.value = '';
+    inputEl.style.height = '48px';
+
+    busy = true;
+    sendBtn.disabled = true;
+
+    const replyEl = appendMsg('assistant', '');
+    const dotEl = document.createElement('span');
+    dotEl.className = 'thinking-dot';
+    dotEl.textContent = '▋';
+    replyEl.appendChild(dotEl);
+
+    const systemPrompt =
+      'You are a knowledgeable, helpful assistant with broad expertise across all topics — ' +
+      'science, technology, history, math, coding, law, health, culture, and more. ' +
+      'Answer clearly and concisely. If you are unsure, say so honestly.';
+
+    const messages = [
+      { role: 'system', content: systemPrompt },
+      { role: 'user',   content: text },
+    ];
+
+    try {
+      const inputs = processor.apply_chat_template(messages, {
+        tokenize: true,
+        add_generation_prompt: true,
+        return_dict: true,
+      });
+
+      let fullText = '';
+
+      const streamer = new Streamer(processor.tokenizer, {
+        skip_prompt: true,
+        skip_special_tokens: true,
+        callback_function: (chunk) => {
+          fullText += chunk;
+          replyEl.textContent = fullText;
+        },
+      });
+
+      await model.generate({
+        ...inputs,
+        max_new_tokens: 512,
+        do_sample: false,
+        streamer,
+      });
+
+    } catch (err) {
+      console.error('[simple.html] generate error:', err);
+      replyEl.textContent = '⚠ Error: ' + err.message;
+    } finally {
+      busy = false;
+      sendBtn.disabled = false;
+      inputEl.focus();
+    }
+  });
+
+  function appendMsg(role, text) {
+    const wrap = document.createElement('div');
+    wrap.className = 'msg ' + role;
+
+    if (role === 'assistant') {
+      const lbl = document.createElement('div');
+      lbl.className = 'label';
+      lbl.textContent = 'Gemma 4';
+      wrap.appendChild(lbl);
+    }
+
+    const body = document.createElement('div');
+    body.textContent = text;
+    wrap.appendChild(body);
+    chatEl.appendChild(wrap);
+    chatEl.scrollTop = chatEl.scrollHeight;
+    return body;   // return text node so streamer can update it
+  }
+
+  loadModel();
+</script>
+</body>
+</html>

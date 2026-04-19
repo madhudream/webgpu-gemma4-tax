@@ -2,6 +2,7 @@ FROM nginx:alpine
 
 COPY index.html  /usr/share/nginx/html/index.html
 COPY basic.html  /usr/share/nginx/html/basic.html
+COPY simple.html /usr/share/nginx/html/simple.html
 COPY data.json   /usr/share/nginx/html/data.json
 COPY css/        /usr/share/nginx/html/css/
 COPY js/         /usr/share/nginx/html/js/
