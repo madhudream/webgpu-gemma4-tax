@@ -102,9 +102,27 @@
     .message { padding: 12px 14px; font-size: 14px; }
     .info-section { margin-top: 28px; padding-top: 24px; }
   }
+  #webgpu-wall {
+    display: none; position: fixed; inset: 0; z-index: 9999;
+    background: #f5f6f8; color: #1a1a1a;
+    font-family: system-ui, sans-serif;
+    flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 2rem; gap: 1.25rem;
+  }
+  #webgpu-wall h2 { font-size: 1.5rem; color: #111; margin: 0; }
+  #webgpu-wall p  { color: #555; max-width: 380px; line-height: 1.6; margin: 0; }
+  #webgpu-wall .browsers { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; margin-top: 0.25rem; }
+  #webgpu-wall .browsers span { background: #fff; border: 1px solid #ccc; border-radius: 0.5rem; padding: 0.4rem 0.9rem; font-size: 0.85rem; }
 </style>
 </head>
 <body>
+<div id="webgpu-wall">
+  <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+  <h2>Desktop browser required</h2>
+  <p>This app runs an AI model on your device using <strong>WebGPU</strong>. Please open it on a desktop with a supported browser:</p>
+  <div class="browsers"><span>Chrome 113+</span><span>Edge 113+</span></div>
+</div>
+<script>(function(){var m=/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);if(m||!navigator.gpu)document.getElementById('webgpu-wall').style.display='flex';})();</script>
 <div class="container">
   <header>
     <h1>Gemma 4 <span>WebGPU</span> Demo</h1>
