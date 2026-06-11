@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Discourage cache while iterating on agent/tool code. Browsers honour
+       these for module fetches; combined with DevTools "Disable cache"
+       you avoid stale ESM modules. -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>Arena — Agentic Gemma 4</title>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4Q7ZEMG23Y"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-4Q7ZEMG23Y');
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <!-- Tailwind Play CDN — used by the model's `render_html` fallback tool when
+       no registered web-component fits. Preflight is disabled so Tailwind's
+       reset doesn't clash with arena.css. -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { corePlugins: { preflight: false } };</script>
+  <link rel="stylesheet" href="./css/arena.css" />
+</head>
+<body>
+
+  <!-- WebGPU / mobile gate -->
+  <div id="webgpu-wall">
+    <h2>Desktop browser required</h2>
+    <p>This app runs an AI model on your device using <strong>WebGPU</strong>. Open on desktop with Chrome 113+ or Edge 113+.</p>
+    <a href="./index.html">← back to home</a>
+  </div>
+  <script>(function(){var m=/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);if(m||!navigator.gpu)document.getElementById('webgpu-wall').classList.add('show');})();</script>
+
+  <header class="arena-topbar">
+    <div class="arena-title">
+      <span class="arena-eyebrow">Arena</span>
+      <span class="arena-name">Agentic Gemma 4</span>
+    </div>
+    <div class="arena-status">
+      <span id="ai-dot"></span>
+      <span id="ai-status-text">initialising…</span>
+    </div>
+  </header>
+
+  <main class="arena-layout">
+
+    <!-- Left: examples sidebar -->
+    <aside id="arena-sidebar" class="arena-sidebar"></aside>
+
+    <!-- Centre: example workspace -->
+    <section class="arena-workspace">
+      <header class="ex-header" id="ex-header"></header>
+      <div class="ex-presets" id="ex-presets"></div>
+      <div class="ex-body" id="ex-workspace">
+        <div class="ws-loading">Loading example…</div>
+      </div>
+    </section>
+
+    <!-- Right: chat -->
+    <aside class="arena-chat">
+      <div class="chat-header">
+        <span>Chat</span>
+        <button id="chat-clear-btn" title="Reset conversation">↺</button>
+      </div>
+      <div id="chat-messages" class="chat-messages"></div>
+      <div class="chat-input-row">
+        <textarea id="chat-input" rows="2" placeholder="Ask Gemma…"></textarea>
+        <button id="chat-send-btn" title="Send">↑</button>
+      </div>
+    </aside>
+
+  </main>
+
+  <script type="module">
+    import { startArena } from './js/arena/main.js';
+    startArena();
+  </script>
+</body>
+</html>
